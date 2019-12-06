@@ -1,13 +1,12 @@
 ## Survey and Improvement of Distributed Machine Learning onSpark
 
 ### Instruction for artifact evaluation
-
-Follow the instruction below on how to launch a Jupyternote book and add this repository to AWS SageMaker.
-
-Experiments could be found at 
-
-- Notebook/ParameterServer.ipynb
-- Notebook/Horovod.ipynb
+>Follow the instruction below on how to launch a Jupyternote book and add this repository to AWS SageMaker.
+>
+>Experiments could be found at 
+>
+>- Notebook/ParameterServer.ipynb
+>- Notebook/Horovod.ipynb
 
 
 ### Steps for launching Jupyter Notebook:
