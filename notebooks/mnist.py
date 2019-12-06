@@ -41,7 +41,7 @@ def cnn_model_fn(features, labels, mode):
     conv1 = tf.layers.conv2d(
         inputs=input_layer,
         filters=32,
-        kernel_size=[5, 5],
+        kernel_size=[3, 3],
         padding="same",
         activation=tf.nn.relu)
 
@@ -49,7 +49,8 @@ def cnn_model_fn(features, labels, mode):
     # First max pooling layer with a 2x2 filter and stride of 2
     # Input Tensor Shape: [batch_size, 28, 28, 32]
     # Output Tensor Shape: [batch_size, 14, 14, 32]
-    pool1 = tf.layers.max_pooling2d(inputs=conv1, pool_size=[2, 2], strides=2)
+
+#     pool1 = tf.layers.max_pooling2d(inputs=conv1, pool_size=[2, 2], strides=2)
 
     # Convolutional Layer #2
     # Computes 64 features using a 5x5 filter.
@@ -57,9 +58,9 @@ def cnn_model_fn(features, labels, mode):
     # Input Tensor Shape: [batch_size, 14, 14, 32]
     # Output Tensor Shape: [batch_size, 14, 14, 64]
     conv2 = tf.layers.conv2d(
-        inputs=pool1,
+        inputs=conv1,
         filters=64,
-        kernel_size=[5, 5],
+        kernel_size=[3, 3],
         padding="same",
         activation=tf.nn.relu)
 
@@ -72,17 +73,17 @@ def cnn_model_fn(features, labels, mode):
     # Flatten tensor into a batch of vectors
     # Input Tensor Shape: [batch_size, 7, 7, 64]
     # Output Tensor Shape: [batch_size, 7 * 7 * 64]
-    pool2_flat = tf.reshape(pool2, [-1, 7 * 7 * 64])
+    pool2_flat = tf.reshape(pool2, [-1, 14 * 14 * 64])
 
     # Dense Layer
     # Densely connected layer with 1024 neurons
     # Input Tensor Shape: [batch_size, 7 * 7 * 64]
     # Output Tensor Shape: [batch_size, 1024]
-    dense = tf.layers.dense(inputs=pool2_flat, units=1024, activation=tf.nn.relu)
+    dense = tf.layers.dense(inputs=pool2_flat, units=128, activation=tf.nn.relu)
 
     # Add dropout operation; 0.6 probability that element will be kept
     dropout = tf.layers.dropout(
-        inputs=dense, rate=0.4, training=mode == tf.estimator.ModeKeys.TRAIN)
+        inputs=dense, rate=0.25, training=mode == tf.estimator.ModeKeys.TRAIN)
 
     # Logits layer
     # Input Tensor Shape: [batch_size, 1024]
@@ -165,7 +166,7 @@ if __name__ == "__main__":
     train_input_fn = tf.estimator.inputs.numpy_input_fn(
         x={"x": train_data},
         y=train_labels,
-        batch_size=100,
+        batch_size=128,
         num_epochs=None,
         shuffle=True)
 
@@ -176,7 +177,7 @@ if __name__ == "__main__":
         num_epochs=1,
         shuffle=False)
 
-    train_spec = tf.estimator.TrainSpec(train_input_fn, max_steps=20000)
+    train_spec = tf.estimator.TrainSpec(train_input_fn, max_steps=8725)
     eval_spec = tf.estimator.EvalSpec(eval_input_fn)
     tf.estimator.train_and_evaluate(mnist_classifier, train_spec, eval_spec)
 
