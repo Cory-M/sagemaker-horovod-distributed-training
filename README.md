@@ -1,27 +1,17 @@
-## Sagemaker Distributed Training with Parameter Server and Horovod
+## Survey and Improvement of Distributed Machine Learning onSpark
 
-### Distributed training with SageMaker's script mode using Parameter Server and Horovod 
+### Instruction for artifact evaluation
 
-This lab demonstrates two concepts on a simple MNIST dataset and a TensorFlow deep learning framework:
-- SageMaker distributed training with Parameter Server
-- SageMaker distributed training with Horovod 
-Both labs use SageMaker's "script mode" which allows model's training script to be used as an entry point to SageMaker API. Thus, one can bring into SageMaker existing model scripts without making any modifications to them.
+Follow the instruction below on how to launch a Jupyternote book and add this repository to AWS SageMaker.
 
-#### A. SageMaker's Distributed Training Framework based on Parameter Servers
+Experiments could be found at 
 
-Parameter Server mode allows one to distribute training workload accross multiple compute instances by implementing a parameter server on each of compute instance to handle model's gradient increment averaging and distributing updated model weights. SageMaker implements an asynchronous parameter server mode whereby gradients and model weights of each worker are updated individually, without waiting for the rest of workers to complete their SGD step. One parameter server is instantiated on each compute instance. For example, for train_instance_count = N, you will have total instances = N, ParameterServer = N,Workers = N-1 (one of the instances becomes a Master and does not carry SGD computations). Currenly, there is no provisions to instantiate multiple workers on a compute instance, so there is a limited advantage of selecting compute instances with a large number of compute cores. However, some deep learning frameworks (eg. TensorFlow) have ability to spread their workload accross multiple cores within the same compute instance, in which case selecting a CPU instance with 8+ cores is advisable. Please, note that Parameter Server is implemented on CPU cores, while workers can be implemented on either CPUs or GPUs. 
+- Notebook/ParameterServer.ipynb
+- Notebook/Horovod.ipynb
 
-#### B. SageMaker's Horovod Distributed Training Framework 
-
-What is Horovod? It is a framework allowing a user to distribute a deep learning workload among multiple compute nodes and take advantage of inherent parallelism of deep learning training process. It is available for both CPU and GPU AWS compute instances. Horovod follows the Message Passing Interface (MPI) model in All-Reduce fashion. This is a popular standard for passing messages and managing communication between nodes in a high-performance distributed computing environment. 
-
-#### C. Further improving performance by co-locating compute instances.
-
-To reduce network delays between compute nodes, it is advisable to locate them within the same subnet. We will demonstrate how to deploy subnets withing the same VPC and assign compute instances to to them\
-
-In this lab, we will be instantiating CPU compute nodes for simplicity and scalability. 
 
 ### Steps for launching Jupyter Notebook:
+
 #### Select one of the following AWS Regions in your AWS console:
 ![Navigate to Sagemaker Service](/images/image-20.png)
 
@@ -110,7 +100,7 @@ In this lab, we will be instantiating CPU compute nodes for simplicity and scala
 
 
 
-#### Select 'GitHub repository icon', give it a name, past repo's URL (https://github.com/aws-samples/sagemaker-horovod-distributed-training) and click on "Add repository"
+#### Select 'repository icon', give it a name, past repo's URL (https://github.com/aws-samples/sagemaker-horovod-distributed-training) and click on "Add repository"
 ![Create IAM role for Sagemaker](/images/image-14.png)
 
 
@@ -127,21 +117,7 @@ In this lab, we will be instantiating CPU compute nodes for simplicity and scala
 #### You will see your notebook in "Pending" status. It will take a few minutes for the Jupyter Server to start up and clone your repo. When the status changes to "InService", click on "Open Jupyter" next to the status.
 ![Create IAM role for Sagemaker](/images/image-17.png)
 
-#### You will now see in a separate browser tab a familar Jupyter Notebook interface. Click on the file icon and you will see the repository that was checked out. Navigate into 'notebooks' directory and open two notebooks there:
-
-- tensorflow_script_mode_training_and_serving
-- tensorflow_script_mode_horovod
-![Create IAM role for Sagemaker](/images/image-18.png)
-
-
-
-#### It may take up to a minute for the notebooks to fully load into your browser and for the kernels to start up, so please, be patient.
-#### Click 'Cell' -> 'Run All' in both notebooks. Some cells in the notebooks may take up to 15 min to fully execute. Be patient.
-#### If prompted, select Jupyter kernel 'conda_tensorflow_p36'
-![Create IAM role for Sagemaker](/images/image-19.png)
-
-
-Note that depending on your choice of the host machine, it may take as long as 10 min to build the container the 1st time out. 
+ 
 
 This work is based on two SageMaker examples available in AWS SageMaker Examples directory:
 - https://github.com/awslabs/amazon-sagemaker-examples/tree/master/sagemaker-python-sdk/tensorflow_script_mode_training_and_serving
